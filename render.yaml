@@ -1,0 +1,11 @@
+# Render.com free tier – deploy from dashboard or connect GitHub repo
+# Docs: https://render.com/docs
+services:
+  - type: web
+    name: bondandharvey
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0

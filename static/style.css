@@ -1,0 +1,280 @@
+/* Bond and Harvey – POS Food Menu */
+:root {
+  --bg: #0f1419;
+  --surface: #1a2332;
+  --surface2: #243044;
+  --text: #e8ecf1;
+  --muted: #8b9cad;
+  --accent: #c9a227;
+  --accent-hover: #e0b83d;
+  --success: #4ade80;
+  --radius: 12px;
+  --font-display: "DM Serif Display", Georgia, serif;
+  --font-body: "Outfit", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* Header */
+.site-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--surface2);
+  padding: 1rem 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.site-header .wrap {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.logo {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+}
+.search-wrap {
+  flex: 1;
+  max-width: 360px;
+}
+.search-wrap input {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--surface2);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+.search-wrap input::placeholder {
+  color: var(--muted);
+}
+.search-wrap input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.cart-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+.cart-toggle:hover {
+  background: var(--accent-hover);
+}
+.cart-toggle .count {
+  background: var(--bg);
+  color: var(--accent);
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+/* Main + Cart layout */
+.main-wrap {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 1.5rem;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .main-wrap {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Category filter */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+.filters button {
+  padding: 0.5rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--surface2);
+  color: var(--text);
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.filters button:hover,
+.filters button.active {
+  background: var(--surface2);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Menu grid */
+.menu-section h2 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--accent);
+  margin-bottom: 1rem;
+  font-weight: 400;
+}
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+.item-card {
+  background: var(--surface);
+  border: 1px solid var(--surface2);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.item-card h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.item-card .category {
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.item-card .description {
+  font-size: 0.9rem;
+  color: var(--muted);
+  flex: 1;
+}
+.item-card .row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.25rem;
+}
+.item-card .price {
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 1.1rem;
+}
+.item-card .add-btn {
+  padding: 0.5rem 1rem;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.item-card .add-btn:hover {
+  background: var(--accent-hover);
+}
+
+/* Cart panel */
+.cart-panel {
+  background: var(--surface);
+  border: 1px solid var(--surface2);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  position: sticky;
+  top: 5.5rem;
+}
+.cart-panel h2 {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  color: var(--accent);
+  margin-bottom: 1rem;
+  font-weight: 400;
+}
+.cart-list {
+  list-style: none;
+  margin-bottom: 1rem;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.cart-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--surface2);
+  font-size: 0.95rem;
+}
+.cart-list li:last-child {
+  border-bottom: none;
+}
+.cart-list .qty {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.cart-list .item-total {
+  font-weight: 600;
+  color: var(--accent);
+}
+.cart-empty {
+  color: var(--muted);
+  padding: 1.5rem 0;
+  text-align: center;
+  font-size: 0.95rem;
+}
+.cart-total {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--surface2);
+  display: flex;
+  justify-content: space-between;
+}
+.cart-total span:last-child {
+  color: var(--accent);
+}
+
+/* Footer for SEO */
+.site-footer {
+  max-width: 1280px;
+  margin: 2rem auto 0;
+  padding: 1.5rem;
+  border-top: 1px solid var(--surface2);
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+.site-footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.site-footer a:hover {
+  text-decoration: underline;
+}

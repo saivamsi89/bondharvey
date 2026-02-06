@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block body %}
+<header class="site-header">
+  <div class="wrap">
+    <div class="logo-wrap">
+      <h1 class="logo">Bond and Harvey</h1>
+      <span class="tagline">bondandharvey</span>
+    </div>
+    <div class="search-wrap">
+      <input type="search" id="search" placeholder="Search menu..." aria-label="Search food items">
+    </div>
+    <button type="button" class="cart-toggle" id="cartToggle" aria-label="View cart">
+      <span>Cart</span>
+      <span class="count" id="cartCount">0</span>
+    </button>
+  </div>
+</header>
+
+<main class="main-wrap">
+  <section class="content">
+    <div class="filters" id="filters">
+      <button type="button" class="active" data-category="">All</button>
+      <button type="button" data-category="Mains">Mains</button>
+      <button type="button" data-category="Salads">Salads</button>
+      <button type="button" data-category="Sides">Sides</button>
+      <button type="button" data-category="Drinks">Drinks</button>
+      <button type="button" data-category="Desserts">Desserts</button>
+    </div>
+
+    <div class="menu-section">
+      <h2>Menu</h2>
+      <div class="menu-grid" id="menuGrid">
+        {% for item in items %}
+        <article class="item-card" data-id="{{ item.id }}" data-category="{{ item.category }}">
+          <span class="category">{{ item.category }}</span>
+          <h3>{{ item.name }}</h3>
+          <p class="description">{{ item.description }}</p>
+          <div class="row">
+            <span class="price">${{ "%.2f"|format(item.price) }}</span>
+            <button type="button" class="add-btn" data-id="{{ item.id }}" data-name="{{ item.name }}" data-price="{{ item.price }}">Add to cart</button>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <aside class="cart-panel" id="cartPanel" aria-label="Shopping cart">
+    <h2>Your cart</h2>
+    <ul class="cart-list" id="cartList">
+      <li class="cart-empty" id="cartEmpty">Your cart is empty.</li>
+    </ul>
+    <div class="cart-total" id="cartTotalWrap" style="display: none;">
+      <span>Total</span>
+      <span id="cartTotal">$0.00</span>
+    </div>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <p><strong>bondandharvey</strong> – Bond and Harvey. Food menu & order. Accessible to everyone.</p>
+  <p><a href="/">Home</a> · <a href="/sitemap.xml">Sitemap</a> · <a href="/robots.txt">Robots</a></p>
+</footer>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+  const menu = {{ items | tojson }};
+  let cart = [];
+  const cartList = document.getElementById('cartList');
+  const cartCount = document.getElementById('cartCount');
+  const cartTotal = document.getElementById('cartTotal');
+  const cartTotalWrap = document.getElementById('cartTotalWrap');
+  const cartEmpty = document.getElementById('cartEmpty');
+  const menuGrid = document.getElementById('menuGrid');
+  const searchEl = document.getElementById('search');
+  const filters = document.getElementById('filters');
+
+  function renderCart() {
+    cartCount.textContent = cart.reduce((n, l) => n + l.qty, 0);
+    cartEmpty.style.display = cart.length ? 'none' : 'block';
+    cartTotalWrap.style.display = cart.length ? 'flex' : 'none';
+    const lis = cart.map(function(line) {
+      const sub = (line.price * line.qty).toFixed(2);
+      return '<li><span>' + line.name + ' <span class="qty">×' + line.qty + '</span></span><span class="item-total">$' + sub + '</span></li>';
+    }).join('');
+    cartList.innerHTML = cart.length ? lis : '<li class="cart-empty" id="cartEmpty">Your cart is empty.</li>';
+    const total = cart.reduce((s, l) => s + l.price * l.qty, 0);
+    cartTotal.textContent = '$' + total.toFixed(2);
+  }
+
+  function addToCart(id, name, price) {
+    const one = menu.find(function(m) { return m.id === id; });
+    const name_ = one ? one.name : name;
+    const price_ = one ? one.price : parseFloat(price);
+    let line = cart.find(function(l) { return l.id === id; });
+    if (line) line.qty++; else cart.push({ id: id, name: name_, price: price_, qty: 1 });
+    renderCart();
+  }
+
+  function filterMenu(category, q) {
+    q = (q || '').toLowerCase();
+    const cards = menuGrid.querySelectorAll('.item-card');
+    cards.forEach(function(card) {
+      const cat = card.dataset.category;
+      const name = (card.querySelector('h3') || {}).textContent || '';
+      const desc = (card.querySelector('.description') || {}).textContent || '';
+      const matchCat = !category || cat === category;
+      const matchQ = !q || name.toLowerCase().includes(q) || desc.toLowerCase().includes(q);
+      card.style.display = matchCat && matchQ ? '' : 'none';
+    });
+  }
+
+  menuGrid.addEventListener('click', function(e) {
+    const btn = e.target.closest('.add-btn');
+    if (!btn) return;
+    addToCart(parseInt(btn.dataset.id, 10), btn.dataset.name, btn.dataset.price);
+  });
+
+  filters.addEventListener('click', function(e) {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    filters.querySelectorAll('button').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    filterMenu(btn.dataset.category || '', searchEl.value);
+  });
+
+  searchEl.addEventListener('input', function() {
+    const active = filters.querySelector('button.active');
+    filterMenu(active ? active.dataset.category || '' : '', searchEl.value);
+  });
+
+  renderCart();
+})();
+</script>
+{% endblock %}
